@@ -1,9 +1,6 @@
----
-title: "Reproducible Research - Peer Assessment 1"
-author: "henfibr"
-date: "Sunday, June 14, 2015"
-output: html_document
----
+# Reproducible Research - Peer Assessment 1
+henfibr  
+Sunday, June 14, 2015  
 
 ## Introduction
 
@@ -36,14 +33,11 @@ This data analysis uses the following libraries:
 * plyr (for data manipulation)
 * ggplot2 (for graphics)
 
-```{r libraries,echo=FALSE}
-library(lubridate)
-library(plyr,warn.conflicts=FALSE)
-library(ggplot2)
-```
+
 
 ## Loading and preprocessing the data - no need to unzip, use the unz() function
-```{r data}
+
+```r
 	if(!file.exists("activity.zip")){
 		stop("File activity.zip was not found
 			 in the current working directory")
@@ -55,7 +49,8 @@ library(ggplot2)
 
 
 ## Mean total number of steps taken per day
-```{r }
+
+```r
 stepsPerDay <- ddply(activity, .(month=month(date), day=day(date)), summarize,
                     dailySteps = sum(steps,na.rm = TRUE)
 )
@@ -64,26 +59,31 @@ meanStepsPerDay <- mean(stepsPerDay$dailySteps)
 medianStepsPerDay <- median(stepsPerDay$dailySteps)
 ```
 
-* The mean total number of steps taken per day is `r meanStepsPerDay`.  
-* The median total number of steps taken per day is `r medianStepsPerDay`.
+* The mean total number of steps taken per day is 9354.2295082.  
+* The median total number of steps taken per day is 10395.
 
-```{r hist1}
+
+```r
 hist(stepsPerDay$dailySteps, col = 'blue',
 		xlab = 'Steps Per Day',ylab = 'Number of Days',
 		main = 'Histogram of Steps per day')
 rug(stepsPerDay$dailySteps)
 ```
 
+![](PA1_template_files/figure-html/hist1-1.png) 
+
 ## Average daily activity pattern
 
-```{r maxintervalsteps}
+
+```r
 meanStepsPerInterval <- ddply(activity, .(interval), summarize, 
 	meanSteps = mean(steps, na.rm=TRUE))
 maxMeanIntervalSteps <- max(meanStepsPerInterval$meanSteps)
 maxIntervalMeanSteps <- meanStepsPerInterval$interval[meanStepsPerInterval$meanSteps==maxMeanIntervalSteps]
 ```
 
-```{r timeseries1}
+
+```r
 plot(meanStepsPerInterval$interval,meanStepsPerInterval$meanSteps, 
 	xlab = 'Interval', ylab = 'Mean Steps', 
 	main = 'Average Steps per Interval', 
@@ -92,11 +92,14 @@ plot(meanStepsPerInterval$interval,meanStepsPerInterval$meanSteps,
 abline(v = maxIntervalMeanSteps, col = 'red', lty = 3)
 ```
 
-* The maximum average steps is `r maxMeanIntervalSteps`, at interval `r maxIntervalMeanSteps`.  
+![](PA1_template_files/figure-html/timeseries1-1.png) 
+
+* The maximum average steps is 206.1698113, at interval 835.  
 
 ## Handling missing values
 
-```{r imputingcalcs}
+
+```r
 rowsWithMissingValues <- sum(is.na(activity))
 
 activityImputed <- merge(activity, meanStepsPerInterval, by = 'interval', all.x = TRUE)
@@ -109,28 +112,31 @@ stepsPerDayImputed <- ddply(activityImputed, .(month=month(date),day=day(date)),
 
 meanStepsPerDayImputed <- mean(stepsPerDayImputed$dailySteps)
 medianStepsPerDayImputed <- median(stepsPerDayImputed$dailySteps)
-
 ```
 
 
-There are `r rowsWithMissingValues` rows with missing values, all for variable **steps**. 
+There are 2304 rows with missing values, all for variable **steps**. 
 If we impute the missing values by replacing each with the mean steps for their respective intervals, the mean and median are altered as follows:
 
-* mean = `r meanStepsPerDayImputed`
-* median = `r medianStepsPerDayImputed`  
+* mean = 1.0766189\times 10^{4}
+* median = 1.0766189\times 10^{4}  
 
 
-```{r hist2}
+
+```r
 hist(stepsPerDayImputed$dailySteps, col = 'red',
 	xlab = 'Steps Per Day',ylab = 'Number of Days',
 	main = 'Histogram of Daily Steps (Imputed)')
 rug(stepsPerDayImputed$dailySteps)
 ```
 
+![](PA1_template_files/figure-html/hist2-1.png) 
+
 ## Differences in activity patterns between weekdays and weekends
 
 ### A. Missing Values Removed
-```{r weekdaysVSweekends}
+
+```r
 activity$dayType <- as.factor(ifelse(wday(activity$date) < 6, 'weekday', 'weekend'))
 
 meanStepsPerIntervalPerType <- ddply(activity, .(dayType,interval), summarize, meanSteps = mean(steps, na.rm=TRUE))
@@ -141,9 +147,12 @@ plot <- ggplot(meanStepsPerIntervalPerType,
 plot + geom_line(aes(col = dayType)) + facet_wrap(~dayType,ncol=1) + labs(title=" Pattern, Weekdays Vs. Weekends") + xlab('Five-Minute Interval') + ylab('Mean Steps') + theme_bw() + theme(legend.position="none")
 ```
 
+![](PA1_template_files/figure-html/weekdaysVSweekends-1.png) 
+
 ### B. Missing Values Imputed
 
-```{r weekdaysVSweekendsImputed}
+
+```r
 # imputed ver.
 activityImputed$dayType <- as.factor(ifelse(wday(activityImputed$date) < 6, 'weekday', 'weekend'))
 meanStepsPerIntervalPerTypeImputed <- ddply(activityImputed, .(dayType,interval), summarize, 
@@ -156,9 +165,11 @@ plot <- ggplot(meanStepsPerIntervalPerTypeImputed,
 plot + geom_line(aes(col = dayType)) + facet_wrap(~dayType,ncol=1) + labs(title=" Pattern, Weekdays Vs. Weekends") + xlab('Five-Minute Interval') + ylab('Mean Steps (Imputed)') + theme_bw() + theme(legend.position="none")
 ```
 
-### Difference Between Non-Imputed and Imputed Results
-```{r delta}
+![](PA1_template_files/figure-html/weekdaysVSweekendsImputed-1.png) 
 
+### Difference Between Non-Imputed and Imputed Results
+
+```r
 delta <- meanStepsPerIntervalPerTypeImputed$meanSteps - meanStepsPerIntervalPerType$meanSteps
 difference <- cbind(meanStepsPerIntervalPerType,delta)
 
@@ -169,26 +180,37 @@ plot <- ggplot(difference,
 plot + geom_line(aes(col = dayType)) + facet_wrap(~dayType,ncol=1) + labs(title="Difference, Weekdays Vs. Weekends") + xlab('Five-Minute Interval') + ylab('Delta') + theme_bw() + theme(legend.position="none")
 ```
 
-### Alternate Views - Weekday Vs. Weekend
-```{r overlaidplots}
+![](PA1_template_files/figure-html/delta-1.png) 
 
+### Alternate Views - Weekday Vs. Weekend
+
+```r
 # missing values removed
 plot <- ggplot(meanStepsPerIntervalPerType,
 	aes(x = interval,y = meanSteps))
 
 plot + geom_line(aes(col = dayType)) + labs(title="Activity Pattern, Weekdays Vs. Weekends") + xlab('Five-Minute Interval') + ylab('Mean Steps') + theme_bw()
+```
 
+![](PA1_template_files/figure-html/overlaidplots-1.png) 
+
+```r
 # missing values imputed
 plot <- ggplot(meanStepsPerIntervalPerTypeImputed, 
 	aes(x = interval,y = meanSteps))
 
 plot + geom_line(aes(col = dayType)) + labs(title="Activity Pattern, Weekdays Vs. Weekends") + xlab('Five Minute Interval') + ylab('Mean Steps (Imputed)') + theme_bw()
+```
 
+![](PA1_template_files/figure-html/overlaidplots-2.png) 
+
+```r
 # difference - alternative view
 plot <- ggplot(difference, 
 		aes(x = interval,y = delta))
 
 plot + geom_line(aes(col = dayType)) + labs(title="Difference, Weekdays Vs. Weekends") + xlab('Five Minute Interval') + ylab('Delta vs Imputed') + theme_bw()
-
 ```
+
+![](PA1_template_files/figure-html/overlaidplots-3.png) 
 
