@@ -14,6 +14,7 @@ The data for this assignment can be downloaded from the course web site:
 
 * Dataset: [Activity monitoring data](https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip) [52K]
 
+
 The variables included in this dataset are:
 
 * **steps**: Number of steps taking in a 5-minute interval (missing
@@ -24,8 +25,7 @@ The variables included in this dataset are:
     measurement was taken
 
 
-The dataset is stored in a comma-separated-value (CSV) file and there
-are a total of 17,568 observations in this dataset.
+The dataset is stored in a comma-separated-value (CSV) file and there are a total of 17,568 observations in this dataset.
 
 
 This data analysis uses the following libraries:
@@ -66,7 +66,7 @@ medianStepsPerDay <- median(stepsPerDay$dailySteps)
 
 ```r
 hist(stepsPerDay$dailySteps, col = 'blue',
-		xlab = 'Steps Per Day',ylab = 'Number of Days',
+		xlab = 'Steps Per Day',ylab = 'Number of Days ',
 		main = 'Histogram of Steps per day')
 rug(stepsPerDay$dailySteps)
 ```
@@ -97,7 +97,7 @@ abline(v = maxIntervalMeanSteps, col = 'red', lty = 3)
 
 * The maximum average steps is 206.1698113, at interval 835.  
 
-## Handling missing values
+## Handling missing values (Imputation)
 
 
 ```r
