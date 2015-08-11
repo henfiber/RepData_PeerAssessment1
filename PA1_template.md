@@ -1,6 +1,6 @@
 # Reproducible Research - Peer Assessment 1
 henfibr  
-Sunday, June 14, 2015  
+Wednesday, August 12, 2015  
 
 ## Introduction
 
@@ -26,6 +26,7 @@ The variables included in this dataset are:
 
 The dataset is stored in a comma-separated-value (CSV) file and there
 are a total of 17,568 observations in this dataset.
+
 
 This data analysis uses the following libraries:
 
