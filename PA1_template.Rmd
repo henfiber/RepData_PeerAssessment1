@@ -1,7 +1,7 @@
 ---
 title: "Reproducible Research - Peer Assessment 1"
 author: "henfibr"
-date: "Wednesday, August 12, 2015"
+date: "September 18, 2015"
 output:
   html_document:
     keep_md: yes
